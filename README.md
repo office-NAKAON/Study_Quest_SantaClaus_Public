@@ -36,3 +36,7 @@ python3 -m http.server 4173 --directory preview
 8. Webアプリとしてデプロイします。`gas/appsscript.json` の公開範囲は、同じGoogle Workspaceドメインのユーザー向けです。
 
 問題形式は「記述」「〇×」「4択」です。教師管理画面の問題追加で形式を選べます。サンタ画像は開始時からステージ8クリアまで、9枚を順番に切り替えます。
+
+## ライセンス
+
+このリポジトリは [MIT License](LICENSE) です。著作権表示は `Copyright (c) 2026 office-NAKAON` です。
