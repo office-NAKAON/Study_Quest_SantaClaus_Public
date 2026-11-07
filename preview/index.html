@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#9f1d2c">
+  <title>Study Quest with Santa Claus</title>
+  <style>
+  :root{--red:#a91f2d;--red-dark:#741723;--green:#176b58;--green-dark:#0d493d;--cream:#fffaf0;--snow:#f3f8fb;--ink:#26343d;--muted:#65737c;--gold:#e4b441;--line:#dce6e7;--shadow:0 18px 50px rgba(39,55,60,.14)}
+  *{box-sizing:border-box}html{font-size:16px}body{margin:0;color:var(--ink);background:var(--snow);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;line-height:1.6}button,input,textarea,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}:focus-visible{outline:4px solid rgba(228,180,65,.65);outline-offset:3px}
+  .loading{position:fixed;inset:0;z-index:300;display:grid;place-content:center;gap:12px;color:#fff;background:rgba(20,41,45,.78);text-align:center}.spinner{width:42px;height:42px;margin:auto;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+  .toast{position:fixed;z-index:320;right:20px;bottom:20px;max-width:min(420px,calc(100vw - 40px));padding:14px 18px;border-radius:12px;color:#fff;background:#203b3a;box-shadow:var(--shadow)}.toast.error{background:#8d1d2a}
+  .button{min-height:46px;border:0;border-radius:12px;padding:10px 18px;font-weight:900}.button.large{min-height:54px}.button.primary{color:#fff;background:var(--red);box-shadow:0 5px 0 var(--red-dark)}.button.primary:active{transform:translateY(3px);box-shadow:0 2px 0 var(--red-dark)}.button.secondary{color:var(--green-dark);background:#e5f2ee}.button.danger{color:#8d1d2a;background:#fdebed}.button:disabled{cursor:not-allowed;opacity:.55;box-shadow:none}
+  .kicker{margin:0 0 6px;color:var(--green);font-size:.78rem;font-weight:950;letter-spacing:.14em}.kicker.red{color:var(--red)}.kicker.gold{color:#f5cd64}.link-button{margin-top:18px;border:0;color:var(--green);background:transparent;font-weight:850}.icon-text-button,.back-button{min-height:42px;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 12px;color:#fff;background:rgba(255,255,255,.1);font-weight:800}.icon-text-button.light{border-color:var(--line);color:var(--green-dark);background:#fff}
+  .login-view{position:relative;min-height:100vh;display:grid;place-items:center;overflow:hidden;padding:28px;background:#164f46}.login-view:before,.login-view:after{position:absolute;content:"";border-radius:50%;background:rgba(255,255,255,.08)}.login-view:before{width:420px;height:420px;top:-210px;right:-100px}.login-view:after{width:320px;height:320px;bottom:-190px;left:-80px}.snow-layer{position:absolute;inset:0;opacity:.28;background-image:radial-gradient(circle,#fff 0 3px,transparent 4px);background-size:88px 88px}.login-card{position:relative;width:min(100%,470px);padding:40px;border:6px solid #fff;border-radius:28px;background:var(--cream);box-shadow:0 28px 80px rgba(0,0,0,.28);text-align:center}.login-card.compact{max-width:410px}.brand-seal{display:grid;place-items:center;width:70px;height:70px;margin:0 auto 16px;border:5px solid #fff;border-radius:50%;color:#fff;background:var(--red);box-shadow:0 0 0 3px var(--red);font-size:1.4rem;font-weight:950}.login-card h1{margin:8px 0 12px;font-family:Georgia,"Yu Mincho",serif;font-size:clamp(2rem,8vw,3rem);line-height:1.05}.login-card h1 span{color:var(--red);font-size:.58em}.login-lead{margin:0 auto 28px;max-width:360px;color:var(--muted)}.form-stack{display:grid;gap:16px;text-align:left}.form-stack label{display:grid;gap:6px;color:#44545b;font-size:.9rem;font-weight:850}.form-stack input,.modal-content input,.modal-content textarea,.modal-content select,.toolbar input,.toolbar select,.nickname-box input{width:100%;min-height:50px;border:2px solid #d4dfe0;border-radius:11px;padding:10px 13px;background:#fff;outline:none}.form-stack input:focus,.modal-content input:focus,.modal-content textarea:focus,.toolbar input:focus,.toolbar select:focus,.nickname-box input:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(23,107,88,.12)}
+  .student-view{min-height:100vh;background:#edf5f5}.student-header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px max(18px,calc((100vw - 1160px)/2));color:#fff;background:var(--green-dark)}.wordmark{font-family:Georgia,"Yu Mincho",serif;font-size:1.22rem}.wordmark span{color:#f7d47c;font-size:.72em}.student-header p{margin:2px 0 0;color:#c9ded9;font-size:.84rem}.header-actions{display:flex;gap:8px}.student-main{width:min(1160px,calc(100% - 32px));margin:auto;padding:28px 0 60px}.santa-progress-card{display:grid;grid-template-columns:minmax(230px,35%) 1fr;overflow:hidden;border:1px solid #dae6e6;border-radius:28px;background:#fff;box-shadow:var(--shadow)}.santa-frame{min-height:340px;display:grid;place-items:end center;padding:18px;background:#dcefeb}.santa-frame img{display:block;width:100%;height:320px;object-fit:contain}.progress-copy{align-self:center;padding:36px 40px}.progress-copy h1{margin:0 0 10px;font-family:Georgia,"Yu Mincho",serif;font-size:clamp(1.8rem,4vw,3rem);line-height:1.25}.progress-copy>p:not(.kicker){margin:0;color:var(--muted)}.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px}.metric-row div{padding:13px;border-radius:14px;background:#f5f8f7}.metric-row span{display:block;color:var(--muted);font-size:.78rem;font-weight:800}.metric-row strong{display:block;margin-top:2px;color:var(--green-dark);font-size:1.3rem}.overall-track,.stage-track{height:12px;margin-top:14px;border-radius:999px;background:#dce8e5;overflow:hidden}.overall-track div,.stage-track div{height:100%;width:0;border-radius:inherit;background:var(--red);transition:width .35s ease}
+  .stage-section{margin-top:34px}.section-heading{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:16px}.section-heading h2{margin:0;font-size:1.7rem}.section-heading>p{margin:0;color:var(--muted)}.stage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stage-card{position:relative;min-height:172px;border:2px solid transparent;border-radius:20px;padding:18px;color:var(--ink);background:#fff;box-shadow:0 8px 24px rgba(39,55,60,.08);text-align:left}.stage-card:not(:disabled):hover{border-color:var(--gold);transform:translateY(-2px)}.stage-card.current{color:#fff;background:var(--red);box-shadow:0 12px 28px rgba(169,31,45,.25)}.stage-card.complete{border-color:#a9d5c8;background:#f0faf6}.stage-card.locked{color:#8a979d;background:#e7edef}.stage-card .stage-number{display:block;font-size:.78rem;font-weight:950;letter-spacing:.1em}.stage-card .stage-icon{display:block;margin:15px 0 8px;font-size:1.65rem}.stage-card strong{display:block;font-size:1.05rem}.stage-card small{display:block;margin-top:5px;color:inherit;opacity:.8}.stage-card .stage-status{position:absolute;top:14px;right:14px;display:grid;place-items:center;min-width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.08);font-weight:950}
+  .ranking-card{margin-top:24px;border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 8px 24px rgba(39,55,60,.07)}.ranking-card summary{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;cursor:pointer;list-style:none}.ranking-card summary::-webkit-details-marker{display:none}.ranking-card summary span:first-child{display:grid}.ranking-card summary small{color:var(--muted);font-weight:500}.ranking-card[open] summary{border-bottom:1px solid var(--line)}.nickname-box{padding:18px 22px;background:#f7faf9}.nickname-box form>label{display:block;margin-bottom:7px;font-weight:850}.nickname-box form>div{display:grid;grid-template-columns:1fr auto;gap:8px}.ranking-list{display:grid;gap:7px;margin:0;padding:18px 22px 24px;list-style:none}.ranking-list li{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;padding:11px 13px;border-radius:12px;background:#f5f8f7}.ranking-list li.current{background:#fff0d0}.rank-badge{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;color:#fff;background:var(--green);font-weight:950}.ranking-list small{display:block;color:var(--muted)}.empty-state{padding:25px;text-align:center;color:var(--muted)}
+  .play-view{min-height:100vh;background:#eaf4f2}.play-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:14px max(16px,calc((100vw - 980px)/2));border-bottom:1px solid var(--line);background:#fff}.play-header>div{text-align:center}.play-header span{display:block;color:var(--red);font-size:.75rem;font-weight:950}.play-header strong{font-size:1.1rem}.play-header .back-button{justify-self:start;color:#fff;background:var(--green)}.play-header .icon-text-button{justify-self:end}.play-main{width:min(860px,calc(100% - 28px));margin:auto;padding:26px 0 60px}.stage-progress{margin-bottom:16px}.stage-progress>div:first-child{display:flex;justify-content:space-between;font-weight:850}.question-card{padding:clamp(26px,6vw,58px);border:1px solid var(--line);border-radius:26px;background:#fff;box-shadow:var(--shadow)}.question-label{margin:0 0 14px;color:var(--red);font-size:.85rem;font-weight:950;letter-spacing:.12em}.question-card h1{margin:0;font-size:clamp(1.55rem,4vw,2.35rem);line-height:1.55}.question-card form{margin-top:34px}.question-card form label{display:block;margin-bottom:7px;font-weight:900}.question-card form input{width:100%;min-height:62px;border:2px solid #cbd9d8;border-radius:13px;padding:12px 16px;font-size:1.18rem;outline:none}.question-card form input:focus{border-color:var(--green);box-shadow:0 0 0 5px rgba(23,107,88,.12)}.answer-button{width:100%;margin-top:14px;color:#fff;background:var(--green);box-shadow:0 6px 0 var(--green-dark);font-size:1.05rem}.choice-area{display:grid;gap:12px;margin-top:8px}.ox-area{grid-template-columns:1fr 1fr}.choice-grid{grid-template-columns:1fr}.choice-button{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:14px;min-height:64px;border:2px solid #cbd9d8;border-radius:16px;padding:14px 16px;color:var(--ink);background:#f7fbfa;text-align:left;font-weight:850;box-shadow:0 4px 0 #c5d5d2}.choice-button:active{transform:translateY(2px);box-shadow:0 2px 0 #c5d5d2}.choice-button.selected,.choice-button[aria-pressed="true"]{border-color:var(--green);background:#e7f6f1;box-shadow:0 4px 0 #9ecabb}.choice-button .choice-label{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;color:#fff;background:var(--green);font-weight:950}.ox-button{grid-template-columns:1fr;justify-items:center;min-height:92px;font-size:2.6rem;font-weight:950}.ox-button[data-answer="〇"]{color:#176b58}.ox-button[data-answer="×"]{color:#a91f2d}.result-box{margin-top:28px;padding:22px;border-radius:16px;background:#eaf7ef}.result-box.incorrect,.result-box.error{background:#fdecef}.result-box.pending{background:#eef3f8}.result-box h2{margin:0 0 8px}.result-box p{margin:7px 0}.result-box .button{width:100%;margin-top:12px}
+  .answer-feedback{position:fixed;inset:0;z-index:250;display:grid;place-items:center;pointer-events:none;background:rgba(18,50,47,.18)}.answer-feedback span{display:grid;place-items:center;width:min(50vw,270px);height:min(50vw,270px);border:17px solid currentColor;border-radius:50%;font-size:min(32vw,190px);font-weight:950;line-height:1;filter:drop-shadow(0 18px 25px rgba(0,0,0,.24))}.answer-feedback.correct{color:#199568}.answer-feedback.incorrect{color:#d73548}.answer-feedback.incorrect span{border-color:transparent}.answer-feedback.show span{animation:pop .85s ease-out both}@keyframes pop{0%{opacity:0;transform:scale(.35) rotate(-8deg)}35%{opacity:1;transform:scale(1.12)}100%{opacity:0;transform:scale(1.04)}}
+  .celebration-view,.ending-view{position:fixed;inset:0;z-index:240;overflow:auto;display:grid;place-items:center;padding:28px;color:#fff;background:var(--green-dark)}.celebration-card,.ending-card{position:relative;width:min(100%,700px);padding:34px;border:2px solid rgba(255,255,255,.22);border-radius:28px;background:#123f37;box-shadow:0 28px 90px rgba(0,0,0,.34);text-align:center}.celebration-card h1,.ending-card h1{margin:4px 0 10px;font-family:Georgia,"Yu Mincho",serif;font-size:clamp(2rem,7vw,3.7rem)}.clear-image,.ending-santa{height:min(44vh,390px)}.clear-image img,.ending-santa img{width:100%;height:100%;object-fit:contain}.unlocked-item{display:inline-block;margin:8px 0;padding:9px 16px;border-radius:999px;color:#4b3600;background:#f5cd64;font-weight:950}.celebration-actions{display:flex;justify-content:center;gap:10px;margin-top:22px}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}.confetti i{position:absolute;top:-24px;left:var(--x);width:9px;height:17px;background:var(--color);animation:fall var(--duration) linear var(--delay) infinite}@keyframes fall{to{transform:translateY(110vh) rotate(var(--turn))}}.ending-lead{font-size:1.15rem}.certificate{margin:24px auto;padding:28px;border:7px double #c79c34;color:#352c1d;background:#fffdf4}.certificate>p:first-child{margin:0;color:#8c6b1c;font-size:.73rem;font-weight:950;letter-spacing:.16em}.certificate h2{margin:8px 0 18px;font-family:Georgia,"Yu Mincho",serif}.certificate strong{font-size:1.65rem}.certificate b{display:block;margin-top:8px;color:#655530}
+  .teacher-view{min-height:100vh;background:#f2f5f6}.teacher-header{display:flex;align-items:center;justify-content:space-between;padding:15px max(18px,calc((100vw - 1280px)/2));color:#fff;background:#243d40}.teacher-header div{display:flex;align-items:center;gap:12px}.teacher-header span{color:#bfd0d1;font-size:.84rem}.teacher-main{width:min(1280px,calc(100% - 32px));margin:auto;padding:30px 0 60px}.teacher-title{display:flex;align-items:center;justify-content:space-between;gap:20px}.teacher-title h1{margin:0}.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}.summary-grid>div{padding:18px;border:1px solid var(--line);border-radius:14px;background:#fff}.summary-grid span{display:block;color:var(--muted);font-size:.82rem;font-weight:800}.summary-grid strong{font-size:1.65rem}.warning{margin-bottom:16px;padding:14px 17px;border:1px solid #e4b441;border-radius:12px;color:#6a4d00;background:#fff5d6}.admin-tabs{display:flex;gap:6px;margin-bottom:14px;border-bottom:1px solid #cbd6d8}.admin-tabs button{border:0;border-bottom:3px solid transparent;padding:13px 20px;color:var(--muted);background:transparent;font-weight:900}.admin-tabs button.active{border-bottom-color:var(--red);color:var(--red)}.toolbar{display:grid;grid-template-columns:minmax(220px,1fr) auto auto auto;gap:10px;align-items:center;margin-bottom:13px}.toolbar label{white-space:nowrap}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:14px;background:#fff}table{width:100%;border-collapse:collapse;white-space:nowrap}th,td{padding:12px 13px;border-bottom:1px solid #edf1f1;text-align:left;font-size:.84rem}th{color:#58666c;background:#f6f8f8;font-weight:950}.badge{display:inline-block;padding:4px 8px;border-radius:999px;color:#35544d;background:#e4f1ed;font-size:.72rem;font-weight:900}.badge.complete{color:#155b47;background:#d9f2e8}.badge.login{color:#775800;background:#fff0bf}.badge.draft{color:#6b5660;background:#eee7ea}.actions{display:flex;gap:5px}.mini-button{min-height:32px;border:0;border-radius:7px;padding:5px 8px;color:#33484b;background:#eaf0f0;font-size:.73rem;font-weight:850}.mini-button.danger{color:#8d1d2a;background:#fdebed}.stage-validation{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}.stage-check{padding:10px 12px;border-radius:10px;color:#775800;background:#fff0bf;font-size:.8rem;font-weight:850}.stage-check.ready{color:#155b47;background:#d9f2e8}
+  dialog{width:min(94vw,680px);max-height:90vh;border:0;border-radius:20px;padding:0;box-shadow:0 25px 90px rgba(24,38,41,.35)}dialog::backdrop{background:rgba(21,39,42,.68)}.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}.modal-header h2{margin:0;font-size:1.25rem}.close-button{border:0;color:#536266;background:transparent;font-size:1.7rem}.modal-content{padding:22px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-grid label{display:grid;gap:5px;font-size:.84rem;font-weight:850}.form-grid .full{grid-column:1/-1}.modal-content textarea{min-height:105px;resize:vertical}.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}  .question-list{max-height:55vh;overflow:auto;margin:0;padding:0;list-style:none}.question-list li{padding:11px 0;border-bottom:1px solid var(--line)}.new-password{padding:18px;border-radius:12px;background:#eef4f2;text-align:center;font-family:monospace;font-size:1.5rem;font-weight:950}
+  #choiceAnswerFields{display:grid;grid-template-columns:1fr 1fr;gap:13px}#choiceAnswerFields label,#textAnswerFields label,#oxAnswerFields label,#alternativesField{display:grid;gap:5px;font-size:.84rem;font-weight:850}#choiceAnswerFields .full{grid-column:1/-1}
+  @media(max-width:850px){.santa-progress-card{grid-template-columns:1fr}.santa-frame{min-height:250px}.santa-frame img{height:250px}.progress-copy{padding:26px}.stage-grid{grid-template-columns:repeat(2,1fr)}.summary-grid,.stage-validation{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.teacher-title{align-items:flex-start;flex-direction:column}.play-header{grid-template-columns:auto 1fr auto}.play-header .back-button{font-size:0}.play-header .back-button:after{content:"←";font-size:1.15rem}}
+  @media(max-width:540px){.login-card{padding:30px 22px}.student-header{align-items:flex-start}.wordmark span{display:block}.header-actions{flex-direction:column}.student-main{width:min(100% - 20px,1160px);padding-top:12px}.progress-copy{padding:22px}.metric-row{gap:6px}.metric-row div{padding:10px 7px}.metric-row strong{font-size:1.05rem}.stage-grid{gap:9px}.stage-card{min-height:155px;padding:14px}.section-heading{align-items:flex-start;flex-direction:column}.summary-grid{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr}.toolbar input{grid-column:auto}.stage-validation{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.celebration-card,.ending-card{padding:24px 18px}.celebration-actions{flex-direction:column}.nickname-box form>div{grid-template-columns:1fr}.play-header>div strong{font-size:.92rem}.play-header .icon-text-button{font-size:0}.play-header .icon-text-button:before{content:"♪";font-size:1rem}.question-card{padding:25px 20px}}
+  @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+</style>
+
+</head>
+<body>
+  <div id="loading" class="loading hidden" role="status"><div class="spinner"></div><span>読み込み中...</span></div>
+  <div id="toast" class="toast hidden" role="status"></div>
+  <div id="answerFeedback" class="answer-feedback hidden" aria-live="assertive"><span id="answerFeedbackMark"></span></div>
+
+  <section id="loginView" class="login-view">
+    <div class="snow-layer" aria-hidden="true"></div>
+    <main class="login-card">
+      <div class="brand-seal">SQ</div>
+      <p class="kicker">サンタと学ぶ社会科クエスト</p>
+      <h1>Study Quest<br><span>with Santa Claus</span></h1>
+      <p class="login-lead">10問ずつ挑戦して、サンタのクリスマス準備を完成させよう。</p>
+      <form id="studentLoginForm" class="form-stack">
+        <label>生徒ID<input id="studentId" autocomplete="username" required></label>
+        <label>パスワード<input id="studentPassword" type="password" autocomplete="current-password" required></label>
+        <button class="button primary large" type="submit">クエストを始める</button>
+      </form>
+      <button id="showTeacherLogin" class="link-button" type="button">先生はこちら</button>
+    </main>
+  </section>
+
+  <section id="teacherLoginView" class="login-view hidden">
+    <main class="login-card compact">
+      <p class="kicker">Teacher</p><h1>教師管理画面</h1>
+      <form id="teacherLoginForm" class="form-stack">
+        <label>教師用パスワード<input id="teacherPassword" type="password" autocomplete="current-password" required></label>
+        <button class="button primary large" type="submit">ログイン</button>
+      </form>
+      <button id="backToStudentLogin" class="link-button" type="button">生徒ログインへ戻る</button>
+    </main>
+  </section>
+
+  <section id="studentView" class="student-view hidden">
+    <header class="student-header">
+      <div><strong class="wordmark">Study Quest <span>with Santa Claus</span></strong><p id="studentName"></p></div>
+      <div class="header-actions">
+        <button id="soundToggle" class="icon-text-button" type="button" aria-pressed="true">♪ 音あり</button>
+        <button id="studentLogout" class="icon-text-button" type="button">ログアウト</button>
+      </div>
+    </header>
+
+    <main class="student-main">
+      <section class="santa-progress-card">
+        <div class="santa-frame"><img id="santaImage" alt="現在のサンタの準備状況"></div>
+        <div class="progress-copy">
+          <p class="kicker red">YOUR CHRISTMAS QUEST</p>
+          <h1 id="progressHeadline">サンタの準備を始めよう！</h1>
+          <p id="progressMessage">ステージをクリアするたびに、サンタの服装が完成します。</p>
+          <div class="metric-row">
+            <div><span>クリア</span><strong id="completedStages">0 / 8</strong></div>
+            <div><span>全体</span><strong id="overallProgress">0 / 80</strong></div>
+            <div><span>達成率</span><strong id="overallPercent">0%</strong></div>
+          </div>
+          <div class="overall-track"><div id="overallFill"></div></div>
+        </div>
+      </section>
+
+      <section class="stage-section" aria-labelledby="stageMapTitle">
+        <div class="section-heading"><div><p class="kicker red">STAGE MAP</p><h2 id="stageMapTitle">8つの準備を進めよう</h2></div><p>クリアしたステージは復習できます。</p></div>
+        <div id="stageGrid" class="stage-grid"></div>
+      </section>
+
+      <details class="ranking-card">
+        <summary><span><b>みんなの進み具合</b><small>ニックネームのみ表示</small></span><span>ランキングを見る</span></summary>
+        <div class="nickname-box">
+          <form id="nicknameForm"><label for="nicknameInput">ランキング用ニックネーム</label><div><input id="nicknameInput" maxlength="20" required><button class="button secondary" type="submit">設定</button></div></form>
+        </div>
+        <div id="rankingEmpty" class="empty-state hidden">ニックネームを設定した生徒はまだいません。</div>
+        <ol id="rankingList" class="ranking-list"></ol>
+      </details>
+    </main>
+  </section>
+
+  <section id="playView" class="play-view hidden">
+    <header class="play-header"><button id="backToMap" class="back-button" type="button">← ステージマップ</button><div><span id="playModeLabel">挑戦中</span><strong id="playStageTitle">ステージ1</strong></div><button id="playSoundToggle" class="icon-text-button light" type="button">♪ 音あり</button></header>
+    <main class="play-main">
+      <div class="stage-progress"><div><span id="stageProgressText">0 / 10問</span><span id="playOverallText">全体 0 / 80問</span></div><div class="stage-track"><div id="stageProgressFill"></div></div></div>
+      <article id="questionCard" class="question-card">
+        <p id="questionNumber" class="question-label">QUESTION 1</p>
+        <h1 id="questionText">問題を読み込んでいます。</h1>
+        <form id="answerForm">
+          <div id="textAnswerArea">
+            <label for="answerInput">答え</label>
+            <input id="answerInput" autocomplete="off" placeholder="ここに入力">
+          </div>
+          <div id="oxAnswerArea" class="choice-area ox-area hidden" role="group" aria-label="〇か×を選ぶ">
+            <button type="button" class="choice-button ox-button" data-answer="〇">〇</button>
+            <button type="button" class="choice-button ox-button" data-answer="×">×</button>
+          </div>
+          <div id="choiceAnswerArea" class="choice-area choice-grid hidden" role="group" aria-label="選択肢"></div>
+          <button id="answerButton" class="button answer-button" type="submit">答えを判定する</button>
+        </form>
+        <div id="resultBox" class="result-box hidden">
+          <h2 id="resultTitle"></h2><p id="correctAnswer"></p><p id="explanation"></p>
+          <button id="nextQuestion" class="button primary" type="button">次の問題へ</button>
+        </div>
+        <div id="retryBox" class="result-box error hidden"><p id="retryMessage"></p><button id="retryAnswer" class="button primary" type="button">同じ回答を再送する</button></div>
+      </article>
+    </main>
+  </section>
+
+  <section id="stageClearView" class="celebration-view hidden" aria-live="polite">
+    <div id="stageConfetti" class="confetti" aria-hidden="true"></div>
+    <div class="celebration-card">
+      <p class="kicker gold">STAGE CLEAR!</p><h1 id="clearTitle">ステージ1 クリア</h1>
+      <div class="clear-image"><img id="clearSantaImage" alt="新しい服装を身につけたサンタ"></div>
+      <p id="unlockedItem" class="unlocked-item">ブーツを手に入れた！</p>
+      <p id="clearMessage">サンタの準備が一歩進みました。</p>
+      <div class="celebration-actions"><button id="clearToMap" class="button secondary" type="button">ステージマップへ</button><button id="clearNextStage" class="button primary" type="button">次のステージへ</button></div>
+    </div>
+  </section>
+
+  <section id="endingView" class="ending-view hidden" aria-live="polite">
+    <div id="endingConfetti" class="confetti" aria-hidden="true"></div>
+    <main class="ending-card">
+      <p class="kicker gold">QUEST COMPLETE</p><h1>80問完全制覇！</h1>
+      <div class="ending-santa"><img id="endingSantaImage" alt="準備が完成したサンタ"></div>
+      <p class="ending-lead">サンタのクリスマス準備がすべて完成しました。</p>
+      <div class="certificate"><p>STUDY QUEST CERTIFICATE</p><h2>完全制覇 記念証書</h2><strong id="certificateNickname">冒険者</strong><span>さん</span><p>あなたを「サンタの知識パートナー」として認定します。</p><b id="certificateDate"></b><b id="certificateRank"></b></div>
+      <button id="endingToMap" class="button primary large" type="button">ステージマップへ戻る</button>
+    </main>
+  </section>
+
+  <section id="teacherView" class="teacher-view hidden">
+    <header class="teacher-header"><div><strong>Study Quest with Santa Claus</strong><span>教師管理</span></div><button id="teacherLogout" class="icon-text-button" type="button">ログアウト</button></header>
+    <main class="teacher-main">
+      <div class="teacher-title"><div><p class="kicker red">DASHBOARD</p><h1>教師管理画面</h1></div><div><button id="changeTeacherPassword" class="button secondary">教師パスワード変更</button></div></div>
+      <div class="summary-grid"><div><span>登録生徒</span><strong id="totalStudents">0</strong></div><div><span>完全制覇</span><strong id="completedStudents">0</strong></div><div><span>学習中</span><strong id="activeStudents">0</strong></div><div><span>公開問題</span><strong id="publishedQuestions">0 / 80</strong></div></div>
+      <div id="questionWarning" class="warning hidden"></div>
+      <nav class="admin-tabs" aria-label="管理項目"><button class="active" data-tab="students">生徒管理</button><button data-tab="questions">問題管理</button></nav>
+
+      <section id="studentsTab" class="admin-panel">
+        <div class="toolbar"><input id="studentSearch" placeholder="氏名・クラス・生徒IDで検索"><label><input id="incompleteOnly" type="checkbox"> 未達成者のみ</label><button id="importStudentsButton" class="button secondary">一括登録</button><button id="addStudent" class="button primary">生徒を追加</button></div>
+        <div class="table-wrap"><table><thead><tr><th>生徒</th><th>クラス</th><th>到達</th><th>正解数</th><th>ログイン</th><th>操作</th></tr></thead><tbody id="studentTableBody"></tbody></table></div>
+      </section>
+
+      <section id="questionsTab" class="admin-panel hidden">
+        <div id="stageValidation" class="stage-validation"></div>
+        <div class="toolbar"><select id="questionStageFilter" aria-label="ステージ絞り込み"><option value="all">全ステージ</option><option value="1">ステージ1</option><option value="2">ステージ2</option><option value="3">ステージ3</option><option value="4">ステージ4</option><option value="5">ステージ5</option><option value="6">ステージ6</option><option value="7">ステージ7</option><option value="8">ステージ8</option></select><span></span><button id="addQuestion" class="button primary">問題を追加</button></div>
+        <div class="table-wrap"><table><thead><tr><th>ステージ</th><th>番号</th><th>形式</th><th>問題文</th><th>正解</th><th>状態</th><th>操作</th></tr></thead><tbody id="questionTableBody"></tbody></table></div>
+      </section>
+    </main>
+  </section>
+
+  <dialog id="modal"><div class="modal-header"><h2 id="modalTitle"></h2><button id="closeModal" class="close-button" aria-label="閉じる">×</button></div><div id="modalContent" class="modal-content"></div></dialog>
+
+  <script>const SANTA_IMAGES=["assets/santa-stage-0.jpg","assets/santa-stage-1.jpg","assets/santa-stage-2.jpg","assets/santa-stage-3.jpg","assets/santa-stage-4.jpg","assets/santa-stage-5.jpg","assets/santa-stage-6.jpg","assets/santa-stage-7.jpg","assets/santa-stage-8.jpg"];</script><script>(function () {
+  const stageItems = ['ブーツ','赤いズボン','赤いコート','ベルト','手袋','サンタ帽','プレゼント袋','プレゼント'];
+  function demoQuestion(index) {
+    const stage = Math.floor(index / 10) + 1;
+    const number = (index % 10) + 1;
+    const kind = index % 3;
+    if (kind === 1) {
+      return {
+        id: 'demo-' + (index + 1),
+        stage: stage,
+        number: number,
+        type: '〇×',
+        text: '【試運転】ステージ' + stage + 'の問題 ' + number + '：この文は正しい。〇か×か。',
+        answer: '×',
+        alternatives: 'バツ',
+        explanation: '試運転用の〇×問題です。答えは×です。',
+        choices: ['〇', '×'],
+        published: true
+      };
+    }
+    if (kind === 2) {
+      const choices = ['りんご', 'みかん', 'ぶどう', '正解'];
+      return {
+        id: 'demo-' + (index + 1),
+        stage: stage,
+        number: number,
+        type: '4択',
+        text: '【試運転】ステージ' + stage + 'の問題 ' + number + '：正しいものを選んでください。',
+        answer: '正解',
+        alternatives: '',
+        explanation: '試運転用の4択問題です。「正解」を選びます。',
+        choices: choices,
+        published: true
+      };
+    }
+    return {
+      id: 'demo-' + (index + 1),
+      stage: stage,
+      number: number,
+      type: '記述',
+      text: '【試運転】ステージ' + stage + 'の問題 ' + number + '：答えに「正解」と入力してください。',
+      answer: '正解',
+      alternatives: 'せいかい',
+      explanation: '試運転用の記述問題です。',
+      choices: [],
+      published: true
+    };
+  }
+  const questions = Array.from({ length: 80 }, function (_, index) { return demoQuestion(index); });
+  let correctIds = new Set(JSON.parse(localStorage.getItem('demoCorrectIdsV2') || '[]'));
+  let nickname = localStorage.getItem('demoNickname') || 'おためしさん';
+  let studentToken = 'demo-student-token';
+  let teacherToken = 'demo-teacher-token';
+  let students = [{ id: 'demo', password: 'santa123', name: '体験 生徒', className: '1年A組', number: '1', googleAccount: '', nickname: nickname }];
+
+  function progress() {
+    const counts = Array.from({ length: 8 }, function (_, i) {
+      return questions.filter(function (q) { return q.stage === i + 1 && correctIds.has(q.id); }).length;
+    });
+    let completedStages = 0;
+    counts.forEach(function (count, i) { if (count === 10 && completedStages === i) completedStages = i + 1; });
+    const currentStage = completedStages >= 8 ? 8 : completedStages + 1;
+    return {
+      completedStages: completedStages,
+      currentStage: currentStage,
+      currentStageCount: counts[currentStage - 1],
+      totalCorrect: correctIds.size,
+      totalCount: 80,
+      percentage: Math.round(correctIds.size / 80 * 100),
+      completed: completedStages === 8,
+      stageStates: counts.map(function (count, i) {
+        return {
+          stage: i + 1,
+          count: count,
+          completed: i + 1 <= completedStages,
+          unlocked: i + 1 <= currentStage,
+          current: i + 1 === currentStage && completedStages < 8,
+          item: stageItems[i]
+        };
+      })
+    };
+  }
+  function ranking() {
+    const p = progress();
+    return [{ rank: 1, nickname: nickname, completedStages: p.completedStages, currentStage: p.currentStage, correctCount: p.totalCorrect, isCurrent: true }];
+  }
+  function home() {
+    return { success: true, student: { id: 'demo', name: '体験 生徒', className: '1年A組', number: '1', nickname: nickname }, progress: progress(), ranking: ranking() };
+  }
+  function dashboard() {
+    const p = progress();
+    return {
+      success: true,
+      students: students.map(function (s) {
+        return Object.assign({}, s, {
+          completedStages: p.completedStages,
+          currentStage: p.currentStage,
+          correctCount: p.totalCorrect,
+          percentage: p.percentage,
+          completed: p.completed,
+          loggedIn: true
+        });
+      }),
+      questions: questions,
+      questionStatus: {
+        valid: true,
+        errors: [],
+        stages: Array.from({ length: 8 }, function (_, i) { return { stage: i + 1, count: 10, ready: true, errors: [] }; })
+      }
+    };
+  }
+  function acceptedAnswers(question) {
+    const values = [question.answer].concat(String(question.alternatives || '').split(/[\n\r|｜]+/));
+    return values.map(function (value) { return String(value).trim(); }).filter(Boolean);
+  }
+  const api = {
+    loginStudent: function (id, password) {
+      if (id !== 'demo' || password !== 'santa123') return { success: false, message: '試運転では、生徒ID demo・パスワード santa123 を入力してください。' };
+      return Object.assign({ token: studentToken }, home());
+    },
+    resumeStudentSession: function () { return home(); },
+    getStudentHome: function () { return home(); },
+    logoutStudent: function () { return { success: true }; },
+    getStageQuestion: function (token, stage, exclude, reviewIds, review) {
+      const p = progress();
+      const done = new Set(review ? reviewIds : Array.from(correctIds));
+      let candidates = questions.filter(function (q) { return q.stage === Number(stage) && !done.has(q.id); });
+      if (!candidates.length) return { success: true, stageFinished: true, review: Boolean(review), progress: p };
+      const alternatives = candidates.filter(function (q) { return q.id !== String(exclude || ''); });
+      if (alternatives.length) candidates = alternatives;
+      const q = candidates[0];
+      return {
+        success: true,
+        stageFinished: false,
+        review: Boolean(review),
+        question: {
+          id: q.id,
+          number: q.number,
+          stage: q.stage,
+          text: q.text,
+          type: q.type,
+          choices: q.type === '4択' ? q.choices : (q.type === '〇×' ? ['〇', '×'] : [])
+        },
+        progress: p
+      };
+    },
+    submitAnswer: function (token, id, answer, review) {
+      const q = questions.find(function (item) { return item.id === id; });
+      const isCorrect = acceptedAnswers(q).indexOf(String(answer).trim()) !== -1;
+      const before = progress();
+      if (isCorrect && !review) {
+        correctIds.add(id);
+        localStorage.setItem('demoCorrectIdsV2', JSON.stringify(Array.from(correctIds)));
+      }
+      const after = progress();
+      const stageCleared = !review && after.completedStages > before.completedStages;
+      return {
+        success: true,
+        correct: isCorrect,
+        questionId: id,
+        correctAnswer: q.answer,
+        explanation: q.explanation,
+        review: Boolean(review),
+        progress: after,
+        stageCleared: stageCleared,
+        unlockedItem: stageCleared ? stageItems[q.stage - 1] : '',
+        completion: after.completed ? { nickname: nickname, completedDate: '試運転日', rank: 1, title: 'サンタの知識パートナー' } : null
+      };
+    },
+    saveStudentNickname: function (token, value) {
+      nickname = String(value);
+      localStorage.setItem('demoNickname', nickname);
+      return { success: true, nickname: nickname, ranking: ranking() };
+    },
+    loginTeacher: function (password) {
+      return password === 'change-me' ? { success: true, token: teacherToken } : { success: false, message: '試運転の教師パスワードは change-me です。' };
+    },
+    logoutTeacher: function () { return { success: true }; },
+    getTeacherDashboard: function () { return dashboard(); },
+    saveStudent: function () { return { success: true }; },
+    importStudents: function () { return { success: true, added: 2, updated: 0 }; },
+    deleteStudent: function () { return { success: true }; },
+    resetStudentProgress: function () {
+      correctIds = new Set();
+      localStorage.removeItem('demoCorrectIdsV2');
+      return { success: true };
+    },
+    releaseStudentSession: function () { return { success: true }; },
+    reissueStudentPassword: function () { return { success: true, password: 'Santa2026' }; },
+    getUnansweredQuestions: function () {
+      return { success: true, questions: questions.filter(function (q) { return !correctIds.has(q.id); }) };
+    },
+    saveQuestion: function () { return { success: true }; },
+    deleteQuestion: function () { return { success: true }; },
+    changeTeacherPassword: function () { return { success: true }; }
+  };
+  function runner(success, failure) {
+    const target = {
+      withSuccessHandler: function (fn) { return runner(fn, failure); },
+      withFailureHandler: function (fn) { return runner(success, fn); }
+    };
+    return new Proxy(target, {
+      get: function (object, name) {
+        if (name in object) return object[name];
+        return function () {
+          const args = Array.prototype.slice.call(arguments);
+          setTimeout(function () {
+            try { success(api[name].apply(null, args)); }
+            catch (error) { failure(error); }
+          }, 120);
+        };
+      }
+    });
+  }
+  window.google = { script: { run: runner(function () {}, function (error) { console.error(error); }) } };
+  window.__consoleErrors = [];
+  window.addEventListener('error', function (event) { window.__consoleErrors.push(event.message); });
+})();
+</script>
+  <script>
+  const storage = window.localStorage;
+  const state = {
+    studentToken: storage.getItem('santaStudentToken'),
+    teacherToken: storage.getItem('santaTeacherToken'),
+    sound: storage.getItem('santaSound') !== 'off',
+    student: null, progress: null, ranking: [], students: [], questions: [], questionStatus: null,
+    question: null, lastAnswer: '', currentStage: 1, reviewMode: false, reviewCorrectIds: [], pendingClear: null, sending: false, questionPrefetch: null
+  };
+  const $ = (id) => document.getElementById(id);
+  const views = ['loginView','teacherLoginView','studentView','playView','stageClearView','endingView','teacherView'];
+
+  function callServer(name, ...args) {
+    return new Promise((resolve, reject) => google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...args));
+  }
+  function showView(id) { views.forEach((view) => $(view).classList.toggle('hidden', view !== id)); window.scrollTo(0, 0); }
+  function busy(on) { $('loading').classList.toggle('hidden', !on); }
+  function toast(message, error) { const el=$('toast'); el.textContent=message; el.className='toast'+(error?' error':''); clearTimeout(toast.timer); toast.timer=setTimeout(()=>el.classList.add('hidden'),4000); }
+  function escapeHtml(value) { return String(value == null ? '' : value).replace(/[&<>"']/g,(char)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char])); }
+  function isSessionError(message) { return /有効期限|別の端末でログイン/.test(String(message || '')); }
+  function handleError(error) { console.error(error); toast('通信に失敗しました。時間をおいて再度お試しください。', true); }
+  function santaImage(level) { return SANTA_IMAGES[Math.max(0, Math.min(8, Number(level) || 0))] || SANTA_IMAGES[0] || ''; }
+
+  let audioContext;
+  function syncSoundButtons() {
+    ['soundToggle','playSoundToggle'].forEach((id)=>{ if($(id)){ $(id).textContent=state.sound?'♪ 音あり':'♪ 消音'; $(id).setAttribute('aria-pressed',String(state.sound)); }});
+  }
+  function toggleSound(){state.sound=!state.sound;storage.setItem('santaSound',state.sound?'on':'off');syncSoundButtons();if(state.sound)prepareSound()}
+  function prepareSound(){try{const AudioContext=window.AudioContext||window.webkitAudioContext;if(AudioContext&&!audioContext)audioContext=new AudioContext();if(audioContext&&audioContext.state==='suspended')audioContext.resume()}catch(error){console.warn(error)}}
+  function playNotes(notes,type){if(!state.sound)return;try{prepareSound();if(!audioContext)return;notes.forEach((note,index)=>{const oscillator=audioContext.createOscillator(),gain=audioContext.createGain(),start=audioContext.currentTime+index*.13;oscillator.type=type||'sine';oscillator.frequency.value=note;gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(.14,start+.02);gain.gain.exponentialRampToValueAtTime(.0001,start+.28);oscillator.connect(gain);gain.connect(audioContext.destination);oscillator.start(start);oscillator.stop(start+.3)})}catch(error){console.warn(error)}}
+  function showAnswerFeedback(correct){const box=$('answerFeedback');$('answerFeedbackMark').textContent=correct?'〇':'×';box.className='answer-feedback '+(correct?'correct':'incorrect');void box.offsetWidth;box.classList.add('show');playNotes(correct?[523,659,784]:[220,165],correct?'sine':'sawtooth');setTimeout(()=>box.classList.add('hidden'),900)}
+  function createConfetti(id){const colors=['#f5cd64','#e23a4e','#5dbb9d','#ffffff'];$(id).innerHTML=Array.from({length:54},(_,i)=>'<i style="--x:'+((i*37)%100)+'%;--delay:'+((i%12)*.11)+'s;--duration:'+(2.8+(i%7)*.22)+'s;--color:'+colors[i%colors.length]+';--turn:'+((i%2?1:-1)*(180+i*17))+'deg"></i>').join('')}
+
+  async function initialize(){syncSoundButtons();if(state.studentToken){busy(true);try{const result=await callServer('resumeStudentSession',state.studentToken);if(result.success){enterStudent(result);return}storage.removeItem('santaStudentToken');state.studentToken=null}catch(error){handleError(error)}finally{busy(false)}}if(state.teacherToken){await loadTeacherDashboard();if(state.teacherToken)return}showView('loginView')}
+
+  $('showTeacherLogin').addEventListener('click',()=>showView('teacherLoginView'));
+  $('backToStudentLogin').addEventListener('click',()=>showView('loginView'));
+  $('soundToggle').addEventListener('click',toggleSound);$('playSoundToggle').addEventListener('click',toggleSound);
+
+  $('studentLoginForm').addEventListener('submit',async(event)=>{event.preventDefault();busy(true);try{const result=await callServer('loginStudent',$('studentId').value,$('studentPassword').value);if(!result.success)return toast(result.message,true);state.studentToken=result.token;storage.setItem('santaStudentToken',result.token);enterStudent(result)}catch(error){handleError(error)}finally{busy(false)}});
+  function enterStudent(result){state.student=result.student;state.progress=result.progress;state.ranking=result.ranking||[];$('studentName').textContent=result.student.name+'さん';$('nicknameInput').value=result.student.nickname||'';renderStudentHome();showView('studentView')}
+  function renderStudentHome(){const p=state.progress;$('santaImage').src=santaImage(p.completedStages);$('completedStages').textContent=p.completedStages+' / 8';$('overallProgress').textContent=p.totalCorrect+' / 80';$('overallPercent').textContent=p.percentage+'%';$('overallFill').style.width=p.percentage+'%';if(p.completed){$('progressHeadline').textContent='クリスマス準備、完成！';$('progressMessage').textContent='80問完全制覇です。クリア済みステージを復習できます。'}else{$('progressHeadline').textContent='ステージ'+p.currentStage+'に挑戦しよう！';$('progressMessage').textContent='次は「'+p.stageStates[p.currentStage-1].item+'」を準備します。'}renderStageGrid();renderRanking(state.ranking)}
+  function renderStageGrid(){const icons=['♟','◆','▰','▣','●','★','▰','✦'];$('stageGrid').innerHTML=state.progress.stageStates.map((stage)=>{let cls='stage-card',status='🔒',action='まだ遊べません';if(stage.completed){cls+=' complete';status='✓';action='復習する'}else if(stage.current){cls+=' current';status='→';action='挑戦する'}else{cls+=' locked'}return '<button class="'+cls+'" data-stage="'+stage.stage+'" '+(stage.unlocked?'':'disabled')+'><span class="stage-number">STAGE '+stage.stage+'</span><span class="stage-status">'+status+'</span><span class="stage-icon">'+icons[stage.stage-1]+'</span><strong>'+escapeHtml(stage.item)+'</strong><small>'+stage.count+' / 10問・'+action+'</small></button>'}).join('')}
+  $('stageGrid').addEventListener('click',(event)=>{const button=event.target.closest('[data-stage]');if(!button)return;const stage=Number(button.dataset.stage);startStage(stage,state.progress.stageStates[stage-1].completed)});
+  async function startStage(stage,review){state.questionPrefetch=null;state.currentStage=stage;state.reviewMode=Boolean(review);state.reviewCorrectIds=[];state.pendingClear=null;$('playModeLabel').textContent=review?'復習モード':'挑戦中';$('playStageTitle').textContent='ステージ'+stage+'「'+state.progress.stageStates[stage-1].item+'」';showView('playView');await loadQuestion('')}
+  function resetQuestionCard(){$('questionCard').classList.remove('hidden');$('answerForm').classList.remove('hidden');$('resultBox').className='result-box hidden';$('retryBox').classList.add('hidden');$('answerInput').value='';state.lastAnswer='';state.sending=false;$('answerButton').disabled=false;document.querySelectorAll('.choice-button.selected').forEach((button)=>button.classList.remove('selected'))}
+  function renderAnswerControls(question){const type=question.type||'記述';$('textAnswerArea').classList.toggle('hidden',type!=='記述');$('oxAnswerArea').classList.toggle('hidden',type!=='〇×');$('choiceAnswerArea').classList.toggle('hidden',type!=='4択');$('answerButton').classList.toggle('hidden',type!=='記述');$('answerInput').required=type==='記述';if(type==='4択'){const labels=['ア','イ','ウ','エ'];$('choiceAnswerArea').innerHTML=(question.choices||[]).map((choice,index)=>'<button type="button" class="choice-button" data-answer="'+escapeHtml(choice)+'"><span class="choice-label">'+labels[index]+'</span><span class="choice-text">'+escapeHtml(choice)+'</span></button>').join('')}else{$('choiceAnswerArea').innerHTML=''} }
+  function questionRequest(exclude){return callServer('getStageQuestion',state.studentToken,state.currentStage,exclude||'',state.reviewCorrectIds,state.reviewMode)}
+  async function loadQuestion(exclude){busy(true);resetQuestionCard();const key=exclude||'';const prefetch=state.questionPrefetch;state.questionPrefetch=null;try{let result=null;if(prefetch&&prefetch.stage===state.currentStage&&prefetch.review===state.reviewMode&&prefetch.exclude===key){try{result=await prefetch.request}catch(error){result=null}}if(!result)result=await questionRequest(key);if(!result.success){if(isSessionError(result.message))return forceStudentLogout(result.message);return toast(result.message,true)}state.progress=result.progress;if(result.stageFinished){if(state.reviewMode){toast('ステージ'+state.currentStage+'の復習が完了しました！');await refreshStudentHome();showView('studentView')}else{await refreshStudentHome();showView('studentView')}return}state.question=result.question;$('questionNumber').textContent='STAGE '+result.question.stage+'・QUESTION '+result.question.number;$('questionText').textContent=result.question.text;renderAnswerControls(result.question);updatePlayProgress();if((result.question.type||'記述')==='記述')setTimeout(()=>$('answerInput').focus(),0)}catch(error){handleError(error)}finally{busy(false)}}
+  function updatePlayProgress(){const count=state.reviewMode?state.reviewCorrectIds.length:state.progress.stageStates[state.currentStage-1].count;$('stageProgressText').textContent=count+' / 10問';$('stageProgressFill').style.width=(count*10)+'%';$('playOverallText').textContent=state.reviewMode?'復習中':'全体 '+state.progress.totalCorrect+' / 80問'}
+  $('answerForm').addEventListener('submit',async(event)=>{event.preventDefault();if((state.question&&state.question.type||'記述')!=='記述')return;state.lastAnswer=$('answerInput').value;await sendAnswer()});
+  $('oxAnswerArea').addEventListener('click',(event)=>{const button=event.target.closest('[data-answer]');if(!button||state.sending)return;document.querySelectorAll('#oxAnswerArea .choice-button').forEach((item)=>item.classList.toggle('selected',item===button));state.lastAnswer=button.getAttribute('data-answer');sendAnswer()});
+  $('choiceAnswerArea').addEventListener('click',(event)=>{const button=event.target.closest('[data-answer]');if(!button||state.sending)return;document.querySelectorAll('#choiceAnswerArea .choice-button').forEach((item)=>item.classList.toggle('selected',item===button));state.lastAnswer=button.getAttribute('data-answer');sendAnswer()});
+  $('retryAnswer').addEventListener('click',sendAnswer);
+  function showPendingJudgement(){$('answerForm').classList.add('hidden');$('retryBox').classList.add('hidden');$('resultBox').className='result-box pending';$('resultTitle').textContent='判定中…';$('correctAnswer').textContent='';$('explanation').textContent='';$('nextQuestion').classList.add('hidden')}
+  function showSendRetry(message){state.sending=false;$('answerButton').disabled=false;$('resultBox').className='result-box hidden';$('answerForm').classList.remove('hidden');$('retryMessage').textContent=message;$('retryBox').classList.remove('hidden')}
+  async function sendAnswer(){if(!state.question||state.sending)return;state.sending=true;$('answerButton').disabled=true;showPendingJudgement();try{const result=await callServer('submitAnswer',state.studentToken,state.question.id,state.lastAnswer,state.reviewMode);if(!result.success){if(isSessionError(result.message))return forceStudentLogout(result.message);return showSendRetry(result.message)}if(result.correct&&state.reviewMode&&!state.reviewCorrectIds.includes(result.questionId))state.reviewCorrectIds.push(result.questionId);if(result.progress)state.progress=result.progress;state.pendingClear=result.stageCleared?result:null;$('resultBox').className='result-box '+(result.correct?'':'incorrect');$('resultTitle').textContent=result.correct?'正解！':'不正解';$('correctAnswer').textContent=result.correct?'正解として記録しました。':'正解：'+result.correctAnswer;$('explanation').textContent=result.explanation?'解説：'+result.explanation:'';$('nextQuestion').classList.remove('hidden');$('nextQuestion').textContent=result.stageCleared?'ステージクリアへ':'次の問題へ';$('nextQuestion').dataset.exclude=result.correct?'':state.question.id;updatePlayProgress();showAnswerFeedback(result.correct);if(!result.stageCleared){const exclude=result.correct?'':state.question.id;state.questionPrefetch={stage:state.currentStage,review:state.reviewMode,exclude:exclude,request:questionRequest(exclude)}}}catch(error){showSendRetry('通信に失敗しました。同じ回答を再送してください。')}}
+  $('nextQuestion').addEventListener('click',()=>{if(state.pendingClear)return showStageClear(state.pendingClear);loadQuestion($('nextQuestion').dataset.exclude||'')});
+  $('backToMap').addEventListener('click',async()=>{await refreshStudentHome();showView('studentView')});
+  async function refreshStudentHome(){const result=await callServer('getStudentHome',state.studentToken);if(!result.success){if(isSessionError(result.message))return forceStudentLogout(result.message);throw new Error(result.message)}state.student=result.student;state.progress=result.progress;state.ranking=result.ranking||[];renderStudentHome()}
+  function showStageClear(result){const cleared=result.progress.completedStages;$('clearTitle').textContent='ステージ'+cleared+' クリア！';$('clearSantaImage').src=santaImage(cleared);$('unlockedItem').textContent=result.unlockedItem+'を手に入れた！';$('clearMessage').textContent=cleared===8?'サンタのクリスマス準備が完成しました。':'サンタの準備が一歩進みました。';$('clearNextStage').textContent=cleared===8?'ゲームクリアへ':'次のステージへ';createConfetti('stageConfetti');playNotes([523,659,784,1047],'triangle');showView('stageClearView')}
+  $('clearToMap').addEventListener('click',async()=>{await refreshStudentHome();showView('studentView')});$('clearNextStage').addEventListener('click',async()=>{if(state.progress.completed)return showEnding(state.pendingClear&&state.pendingClear.completion);await refreshStudentHome();startStage(state.progress.currentStage,false)});
+  function showEnding(details){const info=details||{};$('endingSantaImage').src=santaImage(8);$('certificateNickname').textContent=info.nickname||state.student.nickname||'冒険者';$('certificateDate').textContent=info.completedDate||'今日';$('certificateRank').textContent=info.rank?'ランキング 第'+info.rank+'位':'ニックネーム設定後に順位を表示';createConfetti('endingConfetti');playNotes([262,330,392,523,659,784,1047],'triangle');showView('endingView')}
+  $('endingToMap').addEventListener('click',async()=>{await refreshStudentHome();showView('studentView')});
+  $('nicknameForm').addEventListener('submit',async(event)=>{event.preventDefault();busy(true);try{const result=await callServer('saveStudentNickname',state.studentToken,$('nicknameInput').value);if(!result.success)return toast(result.message,true);state.student.nickname=result.nickname;state.ranking=result.ranking;renderRanking(result.ranking);toast('ニックネームを設定しました。')}catch(error){handleError(error)}finally{busy(false)}});
+  function renderRanking(ranking){$('rankingEmpty').classList.toggle('hidden',ranking.length>0);$('rankingList').innerHTML=ranking.map((entry)=>'<li class="'+(entry.isCurrent?'current':'')+'"><span class="rank-badge">'+entry.rank+'</span><strong>'+escapeHtml(entry.nickname)+(entry.isCurrent?'（あなた）':'')+'<small>ステージ'+entry.currentStage+(entry.completedStages===8?'・完全制覇':'挑戦中')+'</small></strong><span>'+entry.correctCount+' / 80問</span></li>').join('')}
+  $('studentLogout').addEventListener('click',studentLogout);async function studentLogout(){const token=state.studentToken;state.studentToken=null;storage.removeItem('santaStudentToken');showView('loginView');if(token)callServer('logoutStudent',token)}function forceStudentLogout(message){state.studentToken=null;storage.removeItem('santaStudentToken');showView('loginView');toast(message,true)}
+
+  $('teacherLoginForm').addEventListener('submit',async(event)=>{event.preventDefault();busy(true);try{const result=await callServer('loginTeacher',$('teacherPassword').value);if(!result.success)return toast(result.message,true);state.teacherToken=result.token;storage.setItem('santaTeacherToken',result.token);await loadTeacherDashboard()}catch(error){handleError(error)}finally{busy(false)}});
+  async function loadTeacherDashboard(){busy(true);try{const result=await callServer('getTeacherDashboard',state.teacherToken);if(!result.success){storage.removeItem('santaTeacherToken');state.teacherToken=null;showView('teacherLoginView');return toast(result.message,true)}state.students=result.students;state.questions=result.questions;state.questionStatus=result.questionStatus;renderTeacher();showView('teacherView')}catch(error){handleError(error)}finally{busy(false)}}
+  function renderTeacher(){const completed=state.students.filter((student)=>student.completed).length;$('totalStudents').textContent=state.students.length;$('completedStudents').textContent=completed;$('activeStudents').textContent=state.students.length-completed;const published=state.questions.filter((question)=>question.published).length;$('publishedQuestions').textContent=published+' / 80';$('questionWarning').classList.toggle('hidden',state.questionStatus.valid);$('questionWarning').textContent=state.questionStatus.valid?'':'公開前チェック：'+state.questionStatus.errors.join(' / ');renderStudents();renderQuestions();$('stageValidation').innerHTML=state.questionStatus.stages.map((stage)=>'<div class="stage-check '+(stage.ready?'ready':'')+'">ステージ'+stage.stage+'：'+stage.count+' / 10問 '+(stage.ready?'✓':'要確認')+'</div>').join('')}
+  function renderStudents(){const query=$('studentSearch').value.trim().toLowerCase(),incomplete=$('incompleteOnly').checked;const rows=state.students.filter((student)=>(!incomplete||!student.completed)&&(!query||(student.id+' '+student.name+' '+student.className).toLowerCase().includes(query)));$('studentTableBody').innerHTML=rows.map((student)=>'<tr><td><strong>'+escapeHtml(student.name)+'</strong><br><small>'+escapeHtml(student.id)+'</small></td><td>'+escapeHtml(student.className)+' '+escapeHtml(student.number)+'</td><td><span class="badge '+(student.completed?'complete':'')+'">'+(student.completed?'完全制覇':'ステージ'+student.currentStage)+'</span></td><td>'+student.correctCount+' / 80</td><td>'+(student.loggedIn?'<span class="badge login">ログイン中</span>':'—')+'</td><td><div class="actions"><button class="mini-button" data-student-action="edit" data-id="'+escapeHtml(student.id)+'">編集</button><button class="mini-button" data-student-action="unanswered" data-id="'+escapeHtml(student.id)+'">未正解</button><button class="mini-button" data-student-action="password" data-id="'+escapeHtml(student.id)+'">再発行</button>'+(student.loggedIn?'<button class="mini-button" data-student-action="release" data-id="'+escapeHtml(student.id)+'">解除</button>':'')+'<button class="mini-button danger" data-student-action="reset" data-id="'+escapeHtml(student.id)+'">リセット</button><button class="mini-button danger" data-student-action="delete" data-id="'+escapeHtml(student.id)+'">削除</button></div></td></tr>').join('')}
+  function renderQuestions(){const filter=$('questionStageFilter').value;const rows=state.questions.filter((question)=>filter==='all'||question.stage===Number(filter)).sort((a,b)=>a.stage-b.stage||a.number-b.number);$('questionTableBody').innerHTML=rows.map((question)=>'<tr><td>ステージ'+question.stage+'</td><td>'+question.number+'</td><td>'+escapeHtml(question.type||'記述')+'</td><td><strong>'+escapeHtml(question.text)+'</strong><br><small>ID: '+escapeHtml(question.id)+'</small></td><td>'+escapeHtml(question.answer)+'</td><td><span class="badge '+(question.published?'complete':'draft')+'">'+(question.published?'公開':'下書き')+'</span></td><td><div class="actions"><button class="mini-button" data-question-action="edit" data-id="'+escapeHtml(question.id)+'">編集</button><button class="mini-button danger" data-question-action="delete" data-id="'+escapeHtml(question.id)+'">削除</button></div></td></tr>').join('')}
+  $('studentSearch').addEventListener('input',renderStudents);$('incompleteOnly').addEventListener('change',renderStudents);$('questionStageFilter').addEventListener('change',renderQuestions);
+  document.querySelectorAll('.admin-tabs button').forEach((button)=>button.addEventListener('click',()=>{document.querySelectorAll('.admin-tabs button').forEach((item)=>item.classList.toggle('active',item===button));$('studentsTab').classList.toggle('hidden',button.dataset.tab!=='students');$('questionsTab').classList.toggle('hidden',button.dataset.tab!=='questions')}));
+  function openModal(title,html){$('modalTitle').textContent=title;$('modalContent').innerHTML=html;$('modal').showModal()}function closeModal(){$('modal').close()}$('closeModal').addEventListener('click',closeModal);
+  function studentForm(student){const item=student||{};openModal(student?'生徒情報を編集':'生徒を追加','<form id="studentEditForm"><div class="form-grid"><label>生徒ID<input name="id" value="'+escapeHtml(item.id||'')+'" '+(student?'readonly':'')+' required></label><label>パスワード<input name="password" value="'+escapeHtml(item.password||'')+'" required></label><label>氏名<input name="name" value="'+escapeHtml(item.name||'')+'" required></label><label>クラス<input name="className" value="'+escapeHtml(item.className||'')+'"></label><label>出席番号<input name="number" value="'+escapeHtml(item.number||'')+'"></label><label>Googleアカウント<input name="googleAccount" value="'+escapeHtml(item.googleAccount||'')+'"></label><label class="full">ニックネーム<input name="nickname" value="'+escapeHtml(item.nickname||'')+'" maxlength="20"></label></div><div class="modal-actions"><button type="button" class="button secondary" data-close>キャンセル</button><button class="button primary" type="submit">保存</button></div></form>');$('[data-close]').addEventListener('click',closeModal);$('studentEditForm').addEventListener('submit',async(event)=>{event.preventDefault();const form=new FormData(event.target),data=Object.fromEntries(form.entries());data.isNew=!student;busy(true);try{const result=await callServer('saveStudent',state.teacherToken,data);if(!result.success)return toast(result.message,true);closeModal();await loadTeacherDashboard();toast('生徒情報を保存しました。')}catch(error){handleError(error)}finally{busy(false)}})}
+  $('addStudent').addEventListener('click',()=>studentForm(null));
+  $('importStudentsButton').addEventListener('click',()=>{openModal('生徒を一括登録','<p>スプレッドシートから「生徒ID、パスワード、氏名、クラス、出席番号、Googleアカウント、ニックネーム」の順にコピーして貼り付けてください。</p><textarea id="importText" placeholder="生徒ID&#9;パスワード&#9;氏名..." style="width:100%;min-height:220px"></textarea><div class="modal-actions"><button class="button primary" id="runImport">登録する</button></div>');$('runImport').addEventListener('click',async()=>{busy(true);try{const result=await callServer('importStudents',state.teacherToken,$('importText').value);if(!result.success)return toast(result.message,true);closeModal();await loadTeacherDashboard();toast('追加'+result.added+'名、更新'+result.updated+'名を登録しました。')}catch(error){handleError(error)}finally{busy(false)}})});
+  $('studentTableBody').addEventListener('click',async(event)=>{const button=event.target.closest('[data-student-action]');if(!button)return;const student=state.students.find((item)=>item.id===button.dataset.id),action=button.dataset.studentAction;if(action==='edit')return studentForm(student);if(action==='unanswered'){busy(true);try{const result=await callServer('getUnansweredQuestions',state.teacherToken,student.id);if(!result.success)return toast(result.message,true);openModal(student.name+'さんの未正解問題','<ol class="question-list">'+result.questions.map((q)=>'<li><strong>S'+q.stage+'-'+q.number+'</strong>'+escapeHtml(q.text)+'</li>').join('')+'</ol>')}finally{busy(false)}return}if(action==='password'){if(!confirm(student.name+'さんのパスワードを再発行しますか？'))return;const result=await callServer('reissueStudentPassword',state.teacherToken,student.id);if(result.success){openModal('新しいパスワード','<p class="new-password">'+escapeHtml(result.password)+'</p>');await loadTeacherDashboard()}else toast(result.message,true);return}const labels={release:'ログインセッションを解除',reset:'学習進捗をすべてリセット',delete:'生徒情報と学習記録を削除'};if(!confirm(student.name+'さんの'+labels[action]+'しますか？'))return;busy(true);try{const method={release:'releaseStudentSession',reset:'resetStudentProgress',delete:'deleteStudent'}[action];const result=await callServer(method,state.teacherToken,student.id);if(!result.success)return toast(result.message,true);await loadTeacherDashboard();toast('操作が完了しました。')}finally{busy(false)}});
+  function syncQuestionFormFields(){const type=$('questionType').value;$('textAnswerFields').classList.toggle('hidden',type!=='記述');$('oxAnswerFields').classList.toggle('hidden',type!=='〇×');$('choiceAnswerFields').classList.toggle('hidden',type!=='4択');$('alternativesField').classList.toggle('hidden',type==='4択');$('textAnswerInput').required=type==='記述';$('oxAnswerSelect').required=type==='〇×';['choice1','choice2','choice3','choice4'].forEach((name)=>{const input=document.querySelector('[name="'+name+'"]');if(input)input.required=type==='4択'})}
+  function questionForm(question){const item=question||{stage:Number($('questionStageFilter').value)||1,number:1,published:false,type:'記述',choices:[]};const type=item.type||'記述';const choices=item.choices&&item.choices.length?item.choices:['','','',''];const oxAnswer=type==='〇×'?(item.answer==='×'?'×':'〇'):'〇';openModal(question?'問題を編集':'問題を追加','<form id="questionEditForm"><div class="form-grid"><label>ステージ<select name="stage">'+Array.from({length:8},(_,i)=>'<option value="'+(i+1)+'" '+(item.stage===i+1?'selected':'')+'>'+(i+1)+'</option>').join('')+'</select></label><label>問題番号<input name="number" type="number" min="1" max="10" value="'+item.number+'" required></label><label class="full">形式<select id="questionType" name="type"><option value="記述" '+(type==='記述'?'selected':'')+'>記述</option><option value="〇×" '+(type==='〇×'?'selected':'')+'>〇×</option><option value="4択" '+(type==='4択'?'selected':'')+'>4択</option></select></label><label class="full">問題文<textarea name="text" required>'+escapeHtml(item.text||'')+'</textarea></label><div id="textAnswerFields" class="full '+(type==='記述'?'':'hidden')+'"><label class="full">正解<input id="textAnswerInput" name="answerText" value="'+(type==='記述'?escapeHtml(item.answer||''):'')+'"></label></div><div id="oxAnswerFields" class="full '+(type==='〇×'?'':'hidden')+'"><label class="full">正解<select id="oxAnswerSelect" name="answerOx"><option value="〇" '+(oxAnswer==='〇'?'selected':'')+'>〇</option><option value="×" '+(oxAnswer==='×'?'selected':'')+'>×</option></select></label></div><div id="choiceAnswerFields" class="full '+(type==='4択'?'':'hidden')+'"><label>選択肢ア<input name="choice1" value="'+escapeHtml(choices[0]||'')+'"></label><label>選択肢イ<input name="choice2" value="'+escapeHtml(choices[1]||'')+'"></label><label>選択肢ウ<input name="choice3" value="'+escapeHtml(choices[2]||'')+'"></label><label>選択肢エ<input name="choice4" value="'+escapeHtml(choices[3]||'')+'"></label><label class="full">正解<select name="answerChoice"><option value="1" '+(type==='4択'&&item.answer===choices[0]?'selected':'')+'>ア</option><option value="2" '+(type==='4択'&&item.answer===choices[1]?'selected':'')+'>イ</option><option value="3" '+(type==='4択'&&item.answer===choices[2]?'selected':'')+'>ウ</option><option value="4" '+(type==='4択'&&item.answer===choices[3]?'selected':'')+'>エ</option></select></label></div><label id="alternativesField" class="full '+(type==='4択'?'hidden':'')+'">別解（改行または | で区切る）<textarea name="alternatives">'+escapeHtml(item.alternatives||'')+'</textarea></label><label class="full">解説<textarea name="explanation">'+escapeHtml(item.explanation||'')+'</textarea></label><label class="full"><span><input name="published" type="checkbox" '+(item.published?'checked':'')+'> 公開する</span></label></div><div class="modal-actions"><button type="button" class="button secondary" data-close>キャンセル</button><button class="button primary" type="submit">保存</button></div></form>');$('[data-close]').addEventListener('click',closeModal);$('questionType').addEventListener('change',syncQuestionFormFields);syncQuestionFormFields();$('questionEditForm').addEventListener('submit',async(event)=>{event.preventDefault();const form=new FormData(event.target);const type=String(form.get('type')||'記述');const choiceList=[form.get('choice1'),form.get('choice2'),form.get('choice3'),form.get('choice4')].map((value)=>String(value||'').trim());let answer='';if(type==='記述')answer=String(form.get('answerText')||'').trim();else if(type==='〇×')answer=String(form.get('answerOx')||'').trim();else answer=choiceList[Number(form.get('answerChoice'))-1]||'';const data={id:item.id||'',stage:form.get('stage'),number:form.get('number'),type:type,text:form.get('text'),answer:answer,alternatives:form.get('alternatives')||'',explanation:form.get('explanation')||'',choices:type==='4択'?choiceList.join('\n'):'',published:form.has('published')};await saveQuestionFromForm(data,false)})}
+  async function saveQuestionFromForm(data,confirmImpact){data.confirmImpact=confirmImpact;busy(true);try{const result=await callServer('saveQuestion',state.teacherToken,data);if(result.requiresConfirmation){busy(false);if(confirm(result.message+' 続けますか？'))return saveQuestionFromForm(data,true);return}if(!result.success)return toast(result.message,true);closeModal();await loadTeacherDashboard();toast('問題を保存しました。')}catch(error){handleError(error)}finally{busy(false)}}
+  $('addQuestion').addEventListener('click',()=>questionForm(null));$('questionTableBody').addEventListener('click',async(event)=>{const button=event.target.closest('[data-question-action]');if(!button)return;const question=state.questions.find((item)=>item.id===button.dataset.id);if(button.dataset.questionAction==='edit')return questionForm(question);if(!confirm('この問題を削除しますか？'))return;let result=await callServer('deleteQuestion',state.teacherToken,question.id,false);if(result.requiresConfirmation&&confirm(result.message+' 続けますか？'))result=await callServer('deleteQuestion',state.teacherToken,question.id,true);if(result.success){await loadTeacherDashboard();toast('問題を削除しました。')}else if(!result.requiresConfirmation)toast(result.message,true)});
+  $('changeTeacherPassword').addEventListener('click',()=>{openModal('教師パスワード変更','<form id="passwordForm"><div class="form-grid"><label class="full">現在のパスワード<input name="current" type="password" required></label><label class="full">新しいパスワード（8文字以上）<input name="next" type="password" minlength="8" required></label></div><div class="modal-actions"><button class="button primary">変更する</button></div></form>');$('passwordForm').addEventListener('submit',async(event)=>{event.preventDefault();const form=new FormData(event.target);const result=await callServer('changeTeacherPassword',state.teacherToken,form.get('current'),form.get('next'));if(!result.success)return toast(result.message,true);closeModal();toast('教師パスワードを変更しました。')})});
+  $('teacherLogout').addEventListener('click',()=>{const token=state.teacherToken;state.teacherToken=null;storage.removeItem('santaTeacherToken');showView('teacherLoginView');if(token)callServer('logoutTeacher',token)});
+  initialize();
+</script>
+
+</body>
+</html>

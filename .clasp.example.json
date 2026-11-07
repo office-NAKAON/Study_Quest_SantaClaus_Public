@@ -1,0 +1,10 @@
+{
+  "scriptId": "NEW_GAS_SCRIPT_ID",
+  "rootDir": "gas",
+  "parentId": "NEW_SPREADSHEET_ID",
+  "scriptExtensions": [".js", ".gs"],
+  "htmlExtensions": [".html"],
+  "jsonExtensions": [".json"],
+  "filePushOrder": [],
+  "skipSubdirectories": false
+}

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#9f1d2c">
+  <title>Study Quest with Santa Claus</title>
+  <?!= include('Styles'); ?>
+</head>
+<body>
+  <div id="loading" class="loading hidden" role="status"><div class="spinner"></div><span>読み込み中...</span></div>
+  <div id="toast" class="toast hidden" role="status"></div>
+  <div id="answerFeedback" class="answer-feedback hidden" aria-live="assertive"><span id="answerFeedbackMark"></span></div>
+
+  <section id="loginView" class="login-view">
+    <div class="snow-layer" aria-hidden="true"></div>
+    <main class="login-card">
+      <div class="brand-seal">SQ</div>
+      <p class="kicker">サンタと学ぶ社会科クエスト</p>
+      <h1>Study Quest<br><span>with Santa Claus</span></h1>
+      <p class="login-lead">10問ずつ挑戦して、サンタのクリスマス準備を完成させよう。</p>
+      <form id="studentLoginForm" class="form-stack">
+        <label>生徒ID<input id="studentId" autocomplete="username" required></label>
+        <label>パスワード<input id="studentPassword" type="password" autocomplete="current-password" required></label>
+        <button class="button primary large" type="submit">クエストを始める</button>
+      </form>
+      <button id="showTeacherLogin" class="link-button" type="button">先生はこちら</button>
+    </main>
+  </section>
+
+  <section id="teacherLoginView" class="login-view hidden">
+    <main class="login-card compact">
+      <p class="kicker">Teacher</p><h1>教師管理画面</h1>
+      <form id="teacherLoginForm" class="form-stack">
+        <label>教師用パスワード<input id="teacherPassword" type="password" autocomplete="current-password" required></label>
+        <button class="button primary large" type="submit">ログイン</button>
+      </form>
+      <button id="backToStudentLogin" class="link-button" type="button">生徒ログインへ戻る</button>
+    </main>
+  </section>
+
+  <section id="studentView" class="student-view hidden">
+    <header class="student-header">
+      <div><strong class="wordmark">Study Quest <span>with Santa Claus</span></strong><p id="studentName"></p></div>
+      <div class="header-actions">
+        <button id="soundToggle" class="icon-text-button" type="button" aria-pressed="true">♪ 音あり</button>
+        <button id="studentLogout" class="icon-text-button" type="button">ログアウト</button>
+      </div>
+    </header>
+
+    <main class="student-main">
+      <section class="santa-progress-card">
+        <div class="santa-frame"><img id="santaImage" alt="現在のサンタの準備状況"></div>
+        <div class="progress-copy">
+          <p class="kicker red">YOUR CHRISTMAS QUEST</p>
+          <h1 id="progressHeadline">サンタの準備を始めよう！</h1>
+          <p id="progressMessage">ステージをクリアするたびに、サンタの服装が完成します。</p>
+          <div class="metric-row">
+            <div><span>クリア</span><strong id="completedStages">0 / 8</strong></div>
+            <div><span>全体</span><strong id="overallProgress">0 / 80</strong></div>
+            <div><span>達成率</span><strong id="overallPercent">0%</strong></div>
+          </div>
+          <div class="overall-track"><div id="overallFill"></div></div>
+        </div>
+      </section>
+
+      <section class="stage-section" aria-labelledby="stageMapTitle">
+        <div class="section-heading"><div><p class="kicker red">STAGE MAP</p><h2 id="stageMapTitle">8つの準備を進めよう</h2></div><p>クリアしたステージは復習できます。</p></div>
+        <div id="stageGrid" class="stage-grid"></div>
+      </section>
+
+      <details class="ranking-card">
+        <summary><span><b>みんなの進み具合</b><small>ニックネームのみ表示</small></span><span>ランキングを見る</span></summary>
+        <div class="nickname-box">
+          <form id="nicknameForm"><label for="nicknameInput">ランキング用ニックネーム</label><div><input id="nicknameInput" maxlength="20" required><button class="button secondary" type="submit">設定</button></div></form>
+        </div>
+        <div id="rankingEmpty" class="empty-state hidden">ニックネームを設定した生徒はまだいません。</div>
+        <ol id="rankingList" class="ranking-list"></ol>
+      </details>
+    </main>
+  </section>
+
+  <section id="playView" class="play-view hidden">
+    <header class="play-header"><button id="backToMap" class="back-button" type="button">← ステージマップ</button><div><span id="playModeLabel">挑戦中</span><strong id="playStageTitle">ステージ1</strong></div><button id="playSoundToggle" class="icon-text-button light" type="button">♪ 音あり</button></header>
+    <main class="play-main">
+      <div class="stage-progress"><div><span id="stageProgressText">0 / 10問</span><span id="playOverallText">全体 0 / 80問</span></div><div class="stage-track"><div id="stageProgressFill"></div></div></div>
+      <article id="questionCard" class="question-card">
+        <p id="questionNumber" class="question-label">QUESTION 1</p>
+        <h1 id="questionText">問題を読み込んでいます。</h1>
+        <form id="answerForm">
+          <div id="textAnswerArea">
+            <label for="answerInput">答え</label>
+            <input id="answerInput" autocomplete="off" placeholder="ここに入力">
+          </div>
+          <div id="oxAnswerArea" class="choice-area ox-area hidden" role="group" aria-label="〇か×を選ぶ">
+            <button type="button" class="choice-button ox-button" data-answer="〇">〇</button>
+            <button type="button" class="choice-button ox-button" data-answer="×">×</button>
+          </div>
+          <div id="choiceAnswerArea" class="choice-area choice-grid hidden" role="group" aria-label="選択肢"></div>
+          <button id="answerButton" class="button answer-button" type="submit">答えを判定する</button>
+        </form>
+        <div id="resultBox" class="result-box hidden">
+          <h2 id="resultTitle"></h2><p id="correctAnswer"></p><p id="explanation"></p>
+          <button id="nextQuestion" class="button primary" type="button">次の問題へ</button>
+        </div>
+        <div id="retryBox" class="result-box error hidden"><p id="retryMessage"></p><button id="retryAnswer" class="button primary" type="button">同じ回答を再送する</button></div>
+      </article>
+    </main>
+  </section>
+
+  <section id="stageClearView" class="celebration-view hidden" aria-live="polite">
+    <div id="stageConfetti" class="confetti" aria-hidden="true"></div>
+    <div class="celebration-card">
+      <p class="kicker gold">STAGE CLEAR!</p><h1 id="clearTitle">ステージ1 クリア</h1>
+      <div class="clear-image"><img id="clearSantaImage" alt="新しい服装を身につけたサンタ"></div>
+      <p id="unlockedItem" class="unlocked-item">ブーツを手に入れた！</p>
+      <p id="clearMessage">サンタの準備が一歩進みました。</p>
+      <div class="celebration-actions"><button id="clearToMap" class="button secondary" type="button">ステージマップへ</button><button id="clearNextStage" class="button primary" type="button">次のステージへ</button></div>
+    </div>
+  </section>
+
+  <section id="endingView" class="ending-view hidden" aria-live="polite">
+    <div id="endingConfetti" class="confetti" aria-hidden="true"></div>
+    <main class="ending-card">
+      <p class="kicker gold">QUEST COMPLETE</p><h1>80問完全制覇！</h1>
+      <div class="ending-santa"><img id="endingSantaImage" alt="準備が完成したサンタ"></div>
+      <p class="ending-lead">サンタのクリスマス準備がすべて完成しました。</p>
+      <div class="certificate"><p>STUDY QUEST CERTIFICATE</p><h2>完全制覇 記念証書</h2><strong id="certificateNickname">冒険者</strong><span>さん</span><p>あなたを「サンタの知識パートナー」として認定します。</p><b id="certificateDate"></b><b id="certificateRank"></b></div>
+      <button id="endingToMap" class="button primary large" type="button">ステージマップへ戻る</button>
+    </main>
+  </section>
+
+  <section id="teacherView" class="teacher-view hidden">
+    <header class="teacher-header"><div><strong>Study Quest with Santa Claus</strong><span>教師管理</span></div><button id="teacherLogout" class="icon-text-button" type="button">ログアウト</button></header>
+    <main class="teacher-main">
+      <div class="teacher-title"><div><p class="kicker red">DASHBOARD</p><h1>教師管理画面</h1></div><div><button id="changeTeacherPassword" class="button secondary">教師パスワード変更</button></div></div>
+      <div class="summary-grid"><div><span>登録生徒</span><strong id="totalStudents">0</strong></div><div><span>完全制覇</span><strong id="completedStudents">0</strong></div><div><span>学習中</span><strong id="activeStudents">0</strong></div><div><span>公開問題</span><strong id="publishedQuestions">0 / 80</strong></div></div>
+      <div id="questionWarning" class="warning hidden"></div>
+      <nav class="admin-tabs" aria-label="管理項目"><button class="active" data-tab="students">生徒管理</button><button data-tab="questions">問題管理</button></nav>
+
+      <section id="studentsTab" class="admin-panel">
+        <div class="toolbar"><input id="studentSearch" placeholder="氏名・クラス・生徒IDで検索"><label><input id="incompleteOnly" type="checkbox"> 未達成者のみ</label><button id="importStudentsButton" class="button secondary">一括登録</button><button id="addStudent" class="button primary">生徒を追加</button></div>
+        <div class="table-wrap"><table><thead><tr><th>生徒</th><th>クラス</th><th>到達</th><th>正解数</th><th>ログイン</th><th>操作</th></tr></thead><tbody id="studentTableBody"></tbody></table></div>
+      </section>
+
+      <section id="questionsTab" class="admin-panel hidden">
+        <div id="stageValidation" class="stage-validation"></div>
+        <div class="toolbar"><select id="questionStageFilter" aria-label="ステージ絞り込み"><option value="all">全ステージ</option><option value="1">ステージ1</option><option value="2">ステージ2</option><option value="3">ステージ3</option><option value="4">ステージ4</option><option value="5">ステージ5</option><option value="6">ステージ6</option><option value="7">ステージ7</option><option value="8">ステージ8</option></select><span></span><button id="addQuestion" class="button primary">問題を追加</button></div>
+        <div class="table-wrap"><table><thead><tr><th>ステージ</th><th>番号</th><th>形式</th><th>問題文</th><th>正解</th><th>状態</th><th>操作</th></tr></thead><tbody id="questionTableBody"></tbody></table></div>
+      </section>
+    </main>
+  </section>
+
+  <dialog id="modal"><div class="modal-header"><h2 id="modalTitle"></h2><button id="closeModal" class="close-button" aria-label="閉じる">×</button></div><div id="modalContent" class="modal-content"></div></dialog>
+
+  <?!= include('SantaImages'); ?>
+  <?!= include('JavaScript'); ?>
+</body>
+</html>
